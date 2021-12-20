@@ -1,0 +1,1301 @@
+openapi: 3.0.0
+info:
+  title: Airport Fuel Management System
+  description: fuel management system
+  version: 1.0.0
+  contact:
+    email: mfsi.deepak.j@gmail.com
+
+servers:
+  - url: "http://localhost:8000/api/v1"
+    description: for localhost
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+
+paths:
+  # for signup
+  /signup:
+    post:
+      tags:
+        - User
+      summary: creates an user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+
+      responses:
+        201:
+          description: return new user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  user:
+                    type: object
+                  token:
+                    type: string
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  # for signin
+  /signin:
+    post:
+      tags:
+        - User
+      summary: login an user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+
+      responses:
+        200:
+          description: Authenticate an user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  token:
+                    type: string
+                  user:
+                    type: object
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  # for logout
+  /logout:
+    get:
+      tags:
+        - User
+      summary: logout an user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: logout an user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+  # for add new airport
+  /airport/add:
+    post:
+      tags:
+        - Airport
+      summary: Add New Airport
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                airportName:
+                  type: string
+                fuelCapacity:
+                  type: number
+                fuelAvailable:
+                  type: number
+
+      responses:
+        201:
+          description: Returns new Airport Details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  airport:
+                    type: object
+
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+  # fetch airports
+  /airports:
+    get:
+      tags:
+        - Airport
+      summary: returns airports depened upon sort , offset and limit
+      parameters:
+        - name: sortBy
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: offSet
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: array of objects containing airports details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  airports:
+                    type: array
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+        404:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+  # delete a specific airport
+  /airport/{airportId}:
+    delete:
+      tags:
+        - Airport
+      summary: delete an Airport by ID
+      parameters:
+        
+        - name: airportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+           description: delete airport
+        400:
+          description: bad request
+        401:
+          description: unauthorize access
+          
+        500:
+          description: internal server error
+          
+          
+
+  # update airport
+  /airport/{airportid}:
+    put:
+      tags:
+        - Airport
+      summary:  update Airport by ID
+
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: airportid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                airportName:
+                  type: string
+                fuelCapacity:
+                  type: number
+                fuelAvailable:
+                  type: number
+      responses:
+        201:
+          description: returns the updated airport
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  airport:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  # update airport by patch
+  /airport/{airPortId}:
+    patch:
+      tags:
+        - Airport
+      summary:  update Airport by ID
+
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: airPortId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                airportName:
+                  type: string
+                fuelCapacity:
+                  type: number
+                fuelAvailable:
+                  type: number
+      responses:
+        201:
+          description: returns the updated airport
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  airport:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+  # for add new aircraft
+
+  /aircraft/add:
+    post:
+      tags:
+        - Aircraft
+      summary: Add New Aircraft
+      consumes:
+        - application/json
+      produces:
+        - application/json
+     
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aircraftNo:
+                  type: string
+                airline:
+                  type: string
+
+      responses:
+        201:
+          description: Returns new Airport Details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  aircraft:
+                    type: object
+
+        400:
+          description: bad request error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  # fetch aircrafts
+  /aircraft:
+    get:
+      tags:
+        - Aircraft
+      summary: returns aircarft depeneds upon sort , offset and limit
+      parameters:
+        
+        - name: sortBy
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: offSet
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: array of objects containing aircrafts details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  aircrafts:
+                    type: array
+
+        404:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+
+    # delete an aircraft
+
+  /aircraft/{aircraftId}:
+    delete:
+      tags:
+        - Aircraft
+      summary: delete an aircraft by ID
+      parameters:
+        
+        - name: aircraftId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: delete an aircraft
+        404:
+          description: bad request
+        404:
+          description: not found
+        401:
+          description: unauthorize access
+          
+        500:
+          description: internal server error
+          
+
+  #update an aircraft
+
+  /aircraft/{aircraftid}:
+    put:
+      tags:
+        - Aircraft
+      summary: update an aircraft by ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+       
+        - name: aircraftid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aircraftNo:
+                  type: string
+                airline:
+                  type: string
+
+      responses:
+        201:
+          description: returns the updated airport
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  updatedAircraft:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  #update an aircraft by patch
+  /aircraft/{airCraftId}:
+    patch:
+      tags:
+        - Aircraft
+      summary: update an aircraft by ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+       
+        - name: airCraftId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aircraftNo:
+                  type: string
+                airline:
+                  type: string
+
+      responses:
+        201:
+          description: returns the updated airport
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  updatedAircraft:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+  # add transaction
+
+  /transaction/add:
+    post:
+      tags:
+        - Transaction
+      summary: create new transaction
+      consumes:
+        - application/json
+      produces:
+        - application/json
+     
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionType:
+                  type: string
+                airportId:
+                  type: string
+                aircraftId:
+                  type: string
+                quantity:
+                  type: number
+
+      responses:
+        201:
+          description: Returns new transaction Details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  transaction:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string 
+  # fetch transactions
+  /transaction:
+    get:
+      tags:
+        - Transaction
+      summary: returns transaction depeneds upon sort , offset and limit
+      parameters:
+       
+        - name: sortBy
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: offSet
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: array of objects containing transaction details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  transaction:
+                    type: array
+
+        404:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string 
+  # delete transaction
+
+  /transaction/{transactionId}:
+    delete:
+      tags:
+        - Transaction
+      summary: delete a transaction by ID
+      parameters:
+        
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: delete an transaction
+        400:
+          description: bad request
+        401:
+          description: unauthorize access
+          
+        500:
+          description: internal server error
+          
+
+  # update transaction
+  /transaction/{transactionid}:
+    put:
+      tags:
+        - Transaction
+      summary: update an transaction by ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+       
+        - name: transactionid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionType:
+                  type: string
+                airportId:
+                  type: string
+                aircraftId:
+                  type: string
+                quantity:
+                  type: number
+
+      responses:
+        201:
+          description: returns the updated transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  updatedtransaction:
+                    type: object
+
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+      401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+      500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+# update transaction
+  /transaction/{transacTionId}:
+    patch:
+      tags:
+        - Transaction
+      summary: update an transaction by ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+       
+        - name: transacTionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionType:
+                  type: string
+                airportId:
+                  type: string
+                aircraftId:
+                  type: string
+                quantity:
+                  type: number
+
+      responses:
+        201:
+          description: returns the updated transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+                  updatedtransaction:
+                    type: object
+
+        400:
+          description: return error message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        404:
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        401:
+          description: unauthorize access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+          
+          

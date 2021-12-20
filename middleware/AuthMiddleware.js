@@ -11,7 +11,7 @@ exports.isSignedIn = expressJwt({
 exports.getUserById = async (req, res, next, userId) => {
   // getting user by its id
   const user = await userModel.findById(userId);
-  // if user exist set its data to req.profile else send user not found found message
+  // if user exist set its data to req.profile else send user not found  message
   if (user) {
     req.profile = user;
   } else {

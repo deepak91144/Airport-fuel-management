@@ -10,7 +10,7 @@ exports.addTransaction = async (req, res) => {
     errors.errors.forEach((obj) => {
       errorObj.push(obj.msg);
     });
-    console.log(errorObj);
+
     return res.status(201).json({
       status: "error",
       message: errorObj,
@@ -20,7 +20,7 @@ exports.addTransaction = async (req, res) => {
     const { transactionType, airportId, quantity } = req.body;
     const aircraftId = req.body.aircraftId;
     if (!aircraftId && transactionType === "out") {
-      return res.status(401).json({
+      return res.status(404).json({
         message: "aircraft is mandatory",
         status: "error",
       });
@@ -39,7 +39,7 @@ exports.addTransaction = async (req, res) => {
         Number(quantity) + Number(airportData.fuelAvailable) >
         Number(airportData.fuelCapacity)
       ) {
-        return res.status(200).json({
+        return res.status(400).json({
           message: "aiport can not contain fuel beyond its capacity ",
           status: "error",
         });
@@ -51,7 +51,7 @@ exports.addTransaction = async (req, res) => {
         );
         // send the json resposne if updattion is failed
         if (!dataUpdated) {
-          return res.status(200).json({
+          return res.status(400).json({
             message: "something went wrong,",
             status: "error",
           });
@@ -60,7 +60,7 @@ exports.addTransaction = async (req, res) => {
     } else {
       // if the transaction quantity exceed the fuel capacity send a json resposne
       if (quantity > airportData.fuelAvailable) {
-        return res.status(200).json({
+        return res.status(400).json({
           message: "This much fuel is not availabe in airport",
           status: "error",
         });
@@ -72,7 +72,7 @@ exports.addTransaction = async (req, res) => {
         );
         // send json response if updation failed
         if (!isDataUpdated) {
-          return res.status(200).json({
+          return res.status(400).json({
             message: "something went wrong,",
             status: "error",
           });
@@ -97,7 +97,6 @@ exports.addTransaction = async (req, res) => {
       return res.status(201).json({
         message: "new transaction added successfully",
         status: "ok",
-        user: req.profile,
         transaction: newTransaction,
       });
     } else {
@@ -109,167 +108,247 @@ exports.addTransaction = async (req, res) => {
   }
 };
 exports.fetchAllTransaction = async (req, res) => {
-  // destructure values from request parameter
-  let { sortBy, offSet, limit } = req.params;
-  // convert offset string to number
-  let os = Number(offSet);
-  // convert limit string to number
-  let l = Number(limit);
-  // set sortBy text to  airportNameAsc if the soortBy value is firstFetch
-  if (sortBy === "firstFetch") {
-    sortBy = "recent";
-  }
-  var allTransaction = [];
-  let totalRecord = 0;
-  // getting total record of transaction collection
-  totalRecord = await transactionModel.find().count();
-  switch (sortBy) {
-    case "airportNameAsc":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ airportId: 1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
+  try {
+    // destructure values from request parameter
+    let { sortBy, offSet, limit } = req.query;
+    // convert offset string to number
+    let os = Number(offSet);
+    // convert limit string to number
+    let l = Number(limit);
+    // set sortBy text to  airportNameAsc if the soortBy value is firstFetch
+    if (sortBy === "firstFetch") {
+      sortBy = "recent";
+    }
+    var transactions = [];
+    let totalRecord = 0;
+    // getting total record of transaction collection
+    totalRecord = await transactionModel.find().count();
+    switch (sortBy) {
+      case "airportNameAsc":
+        transactions = await transactionModel
+          .find()
+          .sort({ airportId: 1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
 
-      break;
-    case "airportNameDsc":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ airportId: 1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      break;
-    case "recent":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ createdAt: -1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      break;
-    case "older":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ createdAt: 1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      break;
-    case "quantityAsc":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ quantity: 1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      break;
-    case "quantityDsc":
-      allTransaction = await transactionModel
-        .find()
-        .sort({ quantity: -1 })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      break;
-    case "in":
-      allTransaction = await transactionModel
-        .find({ transactionType: "in" })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      totalRecord = await transactionModel
-        .find({ transactionType: "in" })
-        .populate("airportId")
-        .populate("aircraftId")
-        .count();
-      break;
-    case "out":
-      allTransaction = await transactionModel
-        .find({ transactionType: "out" })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      totalRecord = await transactionModel
-        .find({ transactionType: "out" })
-        .populate("airportId")
-        .populate("aircraftId")
-        .count();
+        break;
+      case "airportNameDsc":
+        transactions = await transactionModel
+          .find()
+          .sort({ airportId: 1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        break;
+      case "recent":
+        transactions = await transactionModel
+          .find()
+          .sort({ createdAt: -1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        break;
+      case "older":
+        transactions = await transactionModel
+          .find()
+          .sort({ createdAt: 1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        break;
+      case "quantityAsc":
+        transactions = await transactionModel
+          .find()
+          .sort({ quantity: 1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        break;
+      case "quantityDsc":
+        transactions = await transactionModel
+          .find()
+          .sort({ quantity: -1 })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        break;
+      case "in":
+        transactions = await transactionModel
+          .find({ transactionType: "in" })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        totalRecord = await transactionModel
+          .find({ transactionType: "in" })
+          .populate("airportId")
+          .populate("aircraftId")
+          .count();
+        break;
+      case "out":
+        transactions = await transactionModel
+          .find({ transactionType: "out" })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        totalRecord = await transactionModel
+          .find({ transactionType: "out" })
+          .populate("airportId")
+          .populate("aircraftId")
+          .count();
 
-      break;
+        break;
 
-    default:
-      allTransaction = await transactionModel
-        .find({ airportId: sortBy })
-        .populate("airportId")
-        .populate("aircraftId")
-        .skip(os)
-        .limit(l);
-      totalRecord = await transactionModel
-        .find({ airportId: sortBy })
-        .populate("airportId")
-        .populate("aircraftId")
-        .count();
-  }
+      default:
+        transactions = await transactionModel
+          .find({ airportId: sortBy })
+          .populate("airportId")
+          .populate("aircraftId")
+          .skip(os)
+          .limit(l);
+        totalRecord = await transactionModel
+          .find({ airportId: sortBy })
+          .populate("airportId")
+          .populate("aircraftId")
+          .count();
+    }
 
-  // send json response if the record found else send error message
-  if (allTransaction.length > 0) {
-    return res.status(200).json({
-      message: "All Transaction Fetched successfully",
-      status: "ok",
-      transactions: allTransaction,
-      totalRecord: totalRecord,
-    });
-  } else {
-    return res.status(200).json({
-      message: "All Transaction Fetched successfully",
-      status: "ok",
-      transactions: allTransaction,
+    let allTransactions = [];
+    allTransactions = await transactionModel
+      .find()
+      .sort({ createdAt: -1 })
+      .populate("airportId")
+      .populate("aircraftId");
+    // send json response if the record found else send error message
+    if (transactions.length > 0) {
+      return res.status(200).json({
+        message: "All Transaction Fetched successfully",
+        status: "ok",
+        transactions: transactions,
+        allTransactions: allTransactions,
+        totalRecord: totalRecord,
+      });
+    } else {
+      return res.status(404).json({
+        message: "transaction not found",
+        status: "error",
+        transactions: [],
+        allTransactions: [],
+        totalRecord: 0,
+      });
+    }
+  } catch (error) {
+    return res.status(400).json({
+      message: "something went wrong, try later",
+      status: "error",
+      transactions: [],
+      allTransactions: [],
     });
   }
 };
-exports.fetchTransactionForReport = async (req, res) => {
-  // destructure values from request parameters
-  const { searchTerm } = req.params;
-  let transactions = [];
-  // get the record the searchTerm is firstFetch
-  if (searchTerm === "firstFetch") {
-    transactions = await transactionModel
-      .find()
-      .populate("airportId")
-      .populate("aircraftId");
-  } else {
-    transactions = await transactionModel
-      .find({ airportId: searchTerm })
-      .populate("airportId")
-      .populate("aircraftId");
-  }
-  // get all transaction details
-  const allTransaction = await transactionModel
-    .find()
-    .populate("airportId")
-    .populate("aircraftId");
 
-  // send transaction details in json response else send error message
-  if (transactionModel.length > 0) {
-    return res.json({
-      message: "successfully fetch data",
-      status: "ok",
-      transactions: transactions,
-      allTransactions: allTransaction,
+// delete transaction
+exports.deleteTransaction = async (req, res) => {
+  try {
+    // destructure transactionId from request parameters
+    const { transactionId } = req.params;
+    // delete trandsaction from db;
+    const deletedTransaction = await transactionModel.findOneAndDelete({
+      _id: transactionId,
     });
-  } else {
-    return res.json({
-      message: "something went wrong, try later",
+    // send status code if transaction deleted successfully else send error message
+    if (deletedTransaction) {
+      return res.status(204).json({});
+    } else {
+      return res.status(400).json({
+        status: "error",
+        message: "something went wrong",
+      });
+    }
+  } catch (error) {
+    return res.status(404).json({
+      status: "error",
+      message: "something went wrong",
+    });
+  }
+};
+
+exports.updateTransaction = async (req, res) => {
+  try {
+    // destructure transactionId  from request parameter
+    const { transactionid } = req.params;
+    // getting transaction details from request body
+    const transactionDetails = req.body;
+    // make aircraftId as null if it is a in type transaction
+    if (req.body.transactionType === "in") {
+      req.body.aircraftId = null;
+    }
+    // update the transaction in db
+    const updatedTransaction = await transactionModel.findOneAndUpdate(
+      { _id: transactionid },
+      transactionDetails,
+      { new: true }
+    );
+    // send success message if the transaction updated successfuly else send error resposne
+    if (updatedTransaction) {
+      return res.status(201).json({
+        message: "transaction updated successfully",
+        status: "ok",
+        updatedTransaction: updatedTransaction,
+      });
+    } else {
+      return res.status(201).json({
+        message: "something went wrong",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    return res.status(201).json({
+      message: "something went wrong",
+      status: "error",
+    });
+  }
+};
+exports.editTransaction = async (req, res) => {
+  try {
+    // destructure transactionId  from request parameter
+    const { transacTionId } = req.params;
+    // getting transaction details from request body
+    const transactionDetails = req.body;
+    // make aircraftId as null if it is a in type transaction
+    if (req.body.transactionType === "in") {
+      req.body.aircraftId = null;
+    }
+    // update the transaction in db
+    const updatedTransaction = await transactionModel.findOneAndUpdate(
+      { _id: transacTionId },
+      transactionDetails,
+      { new: true }
+    );
+    // send success message if the transaction updated successfuly else send error resposne
+    if (updatedTransaction) {
+      return res.status(201).json({
+        message: "transaction updated successfully",
+        status: "ok",
+        updatedTransaction: updatedTransaction,
+      });
+    } else {
+      return res.status(201).json({
+        message: "something went wrong",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    return res.status(201).json({
+      message: "something went wrong",
       status: "error",
     });
   }

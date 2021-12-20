@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 // creating airport schema
 const airportSchema = new mongoose.Schema(
   {
-    aiportId: {
-      type: String,
-    },
     airportName: {
       type: String,
       trim: true,

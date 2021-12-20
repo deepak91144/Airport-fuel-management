@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 // creating aircraft Schema
 const airctaftSchema = new mongoose.Schema(
   {
-    aircraftId: {
-      type: String,
-    },
     aircraftNo: {
       type: String,
       trim: true,

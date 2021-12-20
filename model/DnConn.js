@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 // mongodb connection code
 mongoose
-  .connect("mongodb://localhost:27017/airport", {
+  .connect(process.env.DATABASE, {
     useNewUrlParser: "true",
   })
   .then((conn) => {
