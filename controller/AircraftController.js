@@ -174,7 +174,7 @@ exports.deleteAircraft = async (req, res) => {
 exports.updateAircraft = async (req, res) => {
   try {
     // destructure aircraftId from request parameters
-    const { aircraftid } = req.params;
+    const { aircraftId } = req.params;
     // getting aircraft details from request body
     const aircraftData = req.body;
 
@@ -191,7 +191,7 @@ exports.updateAircraft = async (req, res) => {
     }
     // update the aircraft in db
     const updatedAircraft = await aircraftModel.findOneAndUpdate(
-      { _id: aircraftid },
+      { _id: aircraftId },
       aircraftData,
       { new: true }
     );
@@ -218,7 +218,7 @@ exports.updateAircraft = async (req, res) => {
 exports.editAircraft = async () => {
   try {
     // destructure aircraftId from request parameters
-    const { airCraftId } = req.params;
+    const { aircraftId } = req.params;
     // getting aircraft details from request body
     const aircraftData = req.body;
 
@@ -235,7 +235,7 @@ exports.editAircraft = async () => {
     }
     // update the aircraft in db
     const updatedAircraft = await aircraftModel.findOneAndUpdate(
-      { _id: airCraftId },
+      { _id: aircraftId },
       aircraftData,
       { new: true }
     );

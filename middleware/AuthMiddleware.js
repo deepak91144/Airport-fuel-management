@@ -1,8 +1,9 @@
 const userModel = require("../model/User");
 var expressJwt = require("express-jwt");
+const jwt = require("jsonwebtoken");
 // checking the Authenticity of jwt token
 exports.isSignedIn = expressJwt({
-  secret: "airport",
+  secret: process.env.JWT_SECRET,
   userProperty: "auth",
   algorithms: ["sha1", "RS256", "HS256"],
 });

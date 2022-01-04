@@ -1,57 +1,57 @@
 const { validationResult } = require("express-validator");
 const airportModel = require("../model/Airport");
 exports.addAirport = async (req, res) => {
-  // try {
-  // getting errors from request body
-  const errors = validationResult(req);
-  // send json response of error if any else do the intending opperation
-  if (!errors.isEmpty()) {
-    res.status(201).json(errors);
-  } else {
-    // destructering values from request body
-    const { airportName, fuelCapacity, fuelAvailable } = req.body;
-    // if fuelAvailable is more than fuelCapacity send a json reponse
-    if (Number(fuelAvailable) > Number(fuelCapacity)) {
-      return res.status(400).json({
-        message: "fuel availabe can not be greater than fuel capacity",
-        status: "error",
-      });
-    }
-    // checking if airportName exist before
-    const isAirportExist = await airportModel.find({
-      airportName: airportName,
-    });
-    // if airport exist before send a json response that airport exist before
-    if (isAirportExist.length > 0) {
-      return res.status(400).json({
-        message: "Airport name already exist, try different name",
-        status: "error",
-      });
-    }
-    // creating airport model object
-    const airport = new airportModel(req.body);
-    // saving airport details into db
-    const newAirportModel = await airport.save();
-    // after successfull save of airport details into db, send a success json response else send error response
-    if (newAirportModel) {
-      return res.status(201).json({
-        message: "new airport added successfully",
-        status: "ok",
-        airport: newAirportModel,
-      });
+  try {
+    // getting errors from request body
+    const errors = validationResult(req);
+    // send json response of error if any else do the intending opperation
+    if (!errors.isEmpty()) {
+      res.status(201).json(errors);
     } else {
-      return res.status(400).json({
-        message: "something went wrong, try again later",
-        status: "error",
+      // destructering values from request body
+      const { airportName, fuelCapacity, fuelAvailable } = req.body;
+      // if fuelAvailable is more than fuelCapacity send a json reponse
+      if (Number(fuelAvailable) > Number(fuelCapacity)) {
+        return res.status(400).json({
+          message: "fuel availabe can not be greater than fuel capacity",
+          status: "error",
+        });
+      }
+      // checking if airportName exist before
+      const isAirportExist = await airportModel.find({
+        airportName: airportName,
       });
+      // if airport exist before send a json response that airport exist before
+      if (isAirportExist.length > 0) {
+        return res.status(400).json({
+          message: "Airport name already exist, try different name",
+          status: "error",
+        });
+      }
+      // creating airport model object
+      const airport = new airportModel(req.body);
+      // saving airport details into db
+      const newAirportModel = await airport.save();
+      // after successfull save of airport details into db, send a success json response else send error response
+      if (newAirportModel) {
+        return res.status(201).json({
+          message: "new airport added successfully",
+          status: "ok",
+          airport: newAirportModel,
+        });
+      } else {
+        return res.status(400).json({
+          message: "something went wrong, try again later",
+          status: "error",
+        });
+      }
     }
+  } catch (error) {
+    return res.status(400).json({
+      message: "something went wrong, try again later",
+      status: "error",
+    });
   }
-  // } catch (error) {
-  //   return res.status(400).json({
-  //     message: "something went wrong, try again later",
-  //     status: "error",
-  //   });
-  // }
 };
 
 // function to  fetch airport details
@@ -161,6 +161,7 @@ exports.fetchAirports = async (req, res) => {
         allAirport: allAirports,
         TopFuelAvalableAirports: TopFuelAvalableAirports,
         TopFuelCapacityAirports: TopFuelCapacityAirports,
+        auth: req.auth,
       });
     } else {
       return res.status(404).json({
@@ -170,6 +171,7 @@ exports.fetchAirports = async (req, res) => {
         allAirport: [],
         TopFuelAvalableAirports: [],
         TopFuelCapacityAirports: [],
+        error: "error",
       });
     }
   } catch (error) {
@@ -207,7 +209,7 @@ exports.deleteAirport = async (req, res) => {
 exports.updateAirport = async (req, res) => {
   try {
     // destructure airportId from parameters
-    const { airportid } = req.params;
+    const { airportId } = req.params;
     // getting airport details from request body
     const airportDetails = req.body;
     // destructure fuelCapacity,fuelAvailable from request body
@@ -222,7 +224,7 @@ exports.updateAirport = async (req, res) => {
     // update airport details in db
     const updatedAirport = await airportModel.findOneAndUpdate(
       {
-        _id: airportid,
+        _id: airportId,
       },
       airportDetails,
       { new: true }
@@ -250,7 +252,7 @@ exports.updateAirport = async (req, res) => {
 exports.editAirport = async (req, res) => {
   try {
     // destructure airportId from parameters
-    const { airPortId } = req.params;
+    const { airportId } = req.params;
     // getting airport details from request body
     const airportDetails = req.body;
     // destructure fuelCapacity,fuelAvailable from request body
@@ -265,7 +267,7 @@ exports.editAirport = async (req, res) => {
     // update airport details in db
     const updatedAirport = await airportModel.findOneAndUpdate(
       {
-        _id: airPortId,
+        _id: airportId,
       },
       airportDetails,
       { new: true }

@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
       // after successfull signup of user send a json request else send error message
       if (newUser) {
         newUser.password = undefined;
-        const token = jwt.sign({ _id: newUser._id }, "airport");
+        const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET);
         res.cookie("airporttoken", token, { expire: new Date() + 9999 });
 
         res.status(201).json({
@@ -81,7 +81,10 @@ exports.signin = async (req, res) => {
         // if password match do the further opperartion
         if (isPasswordMatched) {
           // create jwt token
-          const token = jwt.sign({ _id: isCorrectEmail._id }, "airport");
+          const token = jwt.sign(
+            { _id: isCorrectEmail._id },
+            process.env.JWT_SECRET
+          );
           // craete cookie for jwt token
           res.cookie("airporttoken", token, { expire: new Date() + 9999 });
           isCorrectEmail.password = undefined;

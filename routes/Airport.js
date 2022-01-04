@@ -16,7 +16,7 @@ router.use(cookieParser());
 router.param("userId", getUserById);
 
 router.post(
-  "/airport/add",
+  "/airports",
   [
     check("airportName", "name shouold be minimum 2 character").isLength({
       min: 2,
@@ -31,10 +31,10 @@ router.post(
 router.get("/airports", isSignedIn, airportController.fetchAirports);
 
 router.delete(
-  "/airport/:airportId",
+  "/airports/:airportId",
   isSignedIn,
   airportController.deleteAirport
 );
-router.put("/airport/:airportid", isSignedIn, airportController.updateAirport);
-router.patch("/airport/:airportId", isSignedIn, airportController.editAirport);
+router.put("/airports/:airportId", isSignedIn, airportController.updateAirport);
+router.patch("/airports/:airportId", isSignedIn, airportController.editAirport);
 module.exports = router;

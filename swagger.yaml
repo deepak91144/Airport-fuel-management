@@ -7,7 +7,7 @@ info:
     email: mfsi.deepak.j@gmail.com
 
 servers:
-  - url: "http://localhost:8000/api/v1"
+  - url: "http://localhost:8000/api"
     description: for localhost
 
 components:
@@ -21,7 +21,7 @@ security:
 
 paths:
   # for signup
-  /signup:
+  /v1/signup:
     post:
       tags:
         - User
@@ -83,7 +83,7 @@ paths:
                   status:
                     type: string
   # for signin
-  /signin:
+  /v1/signin:
     post:
       tags:
         - User
@@ -154,7 +154,7 @@ paths:
                   status:
                     type: string
   # for logout
-  /logout:
+  /v1/logout:
     get:
       tags:
         - User
@@ -197,8 +197,9 @@ paths:
                   status:
                     type: string
 
-  # for add new airport
-  /airport/add:
+  # path for add and get airport data
+  /v1/airports:
+    # for add new airport
     post:
       tags:
         - Airport
@@ -270,9 +271,7 @@ paths:
                     type: string
                   status:
                     type: string
-
-  # fetch airports
-  /airports:
+    # get all airport details
     get:
       tags:
         - Airport
@@ -281,16 +280,19 @@ paths:
         - name: sortBy
           in: query
           required: true
+          default: firstFetch
           schema:
             type: string
         - name: offSet
           in: query
-          required: true
+          required: 
+          default: 0
           schema:
             type: string
         - name: limit
           in: query
           required: true
+          default: 10
           schema:
             type: string
       responses:
@@ -353,14 +355,17 @@ paths:
                   status:
                     type: string
 
-  # delete a specific airport
-  /airport/{airportId}:
+
+  
+    
+  # path for delete, update 
+  /v1/airports/{airportId}:
+    #delete a specific airport
     delete:
       tags:
         - Airport
       summary: delete an Airport by ID
       parameters:
-        
         - name: airportId
           in: path
           required: true
@@ -376,11 +381,7 @@ paths:
           
         500:
           description: internal server error
-          
-          
-
-  # update airport
-  /airport/{airportid}:
+    #update airport by put 
     put:
       tags:
         - Airport
@@ -391,7 +392,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: airportid
+        - name: airportId
           in: path
           required: true
           schema:
@@ -468,8 +469,7 @@ paths:
                     type: string
                   status:
                     type: string
-  # update airport by patch
-  /airport/{airPortId}:
+    # update airport by patch
     patch:
       tags:
         - Airport
@@ -480,7 +480,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: airPortId
+        - name: airportId
           in: path
           required: true
           schema:
@@ -558,9 +558,15 @@ paths:
                   status:
                     type: string
 
-  # for add new aircraft
 
-  /aircraft/add:
+
+  
+  
+    
+  
+# path for add and get airport data
+  /v1/aircrafts:
+    # for add new aircraft
     post:
       tags:
         - Aircraft
@@ -641,8 +647,7 @@ paths:
                     type: string
                   status:
                     type: string
-  # fetch aircrafts
-  /aircraft:
+    # get all aircraft data
     get:
       tags:
         - Aircraft
@@ -652,16 +657,19 @@ paths:
         - name: sortBy
           in: query
           required: true
+          default: firstFetch
           schema:
             type: string
         - name: offSet
           in: query
           required: true
+          default: 0
           schema:
             type: string
         - name: limit
           in: query
           required: true
+          default: 10
           schema:
             type: string
       responses:
@@ -724,15 +732,17 @@ paths:
                   status:
                     type: string
 
+  
+    
+    
+# path for delete,update aircraft
+  /v1/aircrafts/{aircraftId}:
     # delete an aircraft
-
-  /aircraft/{aircraftId}:
     delete:
       tags:
         - Aircraft
       summary: delete an aircraft by ID
       parameters:
-        
         - name: aircraftId
           in: path
           required: true
@@ -750,11 +760,7 @@ paths:
           
         500:
           description: internal server error
-          
-
-  #update an aircraft
-
-  /aircraft/{aircraftid}:
+    # update airport by put 
     put:
       tags:
         - Aircraft
@@ -764,8 +770,7 @@ paths:
       produces:
         - application/json
       parameters:
-       
-        - name: aircraftid
+        - name: aircraftId
           in: path
           required: true
           schema:
@@ -841,8 +846,7 @@ paths:
                     type: string
                   status:
                     type: string
-  #update an aircraft by patch
-  /aircraft/{airCraftId}:
+    # update airport by patch
     patch:
       tags:
         - Aircraft
@@ -852,8 +856,7 @@ paths:
       produces:
         - application/json
       parameters:
-       
-        - name: airCraftId
+        - name: aircraftId
           in: path
           required: true
           schema:
@@ -929,9 +932,12 @@ paths:
                     type: string
                   status:
                     type: string
-  # add transaction
-
-  /transaction/add:
+ 
+    
+  
+# path for add and get transaction data
+  /v1/transactions:
+    # add transaction
     post:
       tags:
         - Transaction
@@ -1006,7 +1012,6 @@ paths:
                   status:
                     type: string 
   # fetch transactions
-  /transaction:
     get:
       tags:
         - Transaction
@@ -1016,16 +1021,19 @@ paths:
         - name: sortBy
           in: query
           required: true
+          default: firstFetch
           schema:
             type: string
         - name: offSet
           in: query
           required: true
+          default: 0
           schema:
             type: string
         - name: limit
           in: query
           required: true
+          default: 10
           schema:
             type: string
       responses:
@@ -1087,9 +1095,10 @@ paths:
                     type: string
                   status:
                     type: string 
-  # delete transaction
-
-  /transaction/{transactionId}:
+  
+  #path for delete ,update transaction 
+  /v1/transactions/{transactionId}:
+    # delete transaction
     delete:
       tags:
         - Transaction
@@ -1111,10 +1120,7 @@ paths:
           
         500:
           description: internal server error
-          
-
   # update transaction
-  /transaction/{transactionid}:
     put:
       tags:
         - Transaction
@@ -1125,7 +1131,7 @@ paths:
         - application/json
       parameters:
        
-        - name: transactionid
+        - name: transactionId
           in: path
           required: true
           schema:
@@ -1205,8 +1211,7 @@ paths:
                     type: string
                   status:
                     type: string
-# update transaction
-  /transaction/{transacTionId}:
+    # update transaction
     patch:
       tags:
         - Transaction
@@ -1217,7 +1222,7 @@ paths:
         - application/json
       parameters:
        
-        - name: transacTionId
+        - name: transactionId
           in: path
           required: true
           schema:

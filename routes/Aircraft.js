@@ -16,7 +16,7 @@ router.use(cookieParser());
 router.param("userId", getUserById);
 
 router.post(
-  "/aircraft/add",
+  "/aircrafts",
   isSignedIn,
   [
     check("aircraftNo", "aircraft Number is mandatory").notEmpty(),
@@ -27,20 +27,20 @@ router.post(
   aircraftController.addAircraft
 );
 
-router.get("/aircraft", isSignedIn, aircraftController.fetchAllAircraft);
+router.get("/aircrafts", isSignedIn, aircraftController.fetchAllAircraft);
 
 router.delete(
-  "/aircraft/:aircraftId",
+  "/aircrafts/:aircraftId",
   isSignedIn,
   aircraftController.deleteAircraft
 );
 router.put(
-  "/aircraft/:aircraftid",
+  "/aircrafts/:aircraftId",
   isSignedIn,
   aircraftController.updateAircraft
 );
 router.patch(
-  "/aircraft/:airCraftId",
+  "/aircrafts/:aircraftId",
   isSignedIn,
   aircraftController.editAircraft
 );

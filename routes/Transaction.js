@@ -15,7 +15,7 @@ router.use(cookieParser());
 router.param("userId", getUserById);
 
 router.post(
-  "/transaction/add",
+  "/transactions",
   [
     check("transactionType", "chose transaction type").notEmpty(),
     check("airportId", "chose airport").notEmpty(),
@@ -26,23 +26,23 @@ router.post(
 );
 
 router.get(
-  "/transaction",
+  "/transactions",
   isSignedIn,
   transactionController.fetchAllTransaction
 );
 router.delete(
-  "/transaction/:transactionId",
+  "/transactions/:transactionId",
   isSignedIn,
   transactionController.deleteTransaction
 );
 
 router.put(
-  "/transaction/:transactionid",
+  "/transactions/:transactionId",
   isSignedIn,
   transactionController.updateTransaction
 );
 router.patch(
-  "/transaction/:transacTionId",
+  "/transactions/:transactionId",
   isSignedIn,
   transactionController.editTransaction
 );

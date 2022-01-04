@@ -284,7 +284,7 @@ exports.deleteTransaction = async (req, res) => {
 exports.updateTransaction = async (req, res) => {
   try {
     // destructure transactionId  from request parameter
-    const { transactionid } = req.params;
+    const { transactionId } = req.params;
     // getting transaction details from request body
     const transactionDetails = req.body;
     // make aircraftId as null if it is a in type transaction
@@ -293,7 +293,7 @@ exports.updateTransaction = async (req, res) => {
     }
     // update the transaction in db
     const updatedTransaction = await transactionModel.findOneAndUpdate(
-      { _id: transactionid },
+      { _id: transactionId },
       transactionDetails,
       { new: true }
     );
@@ -320,7 +320,7 @@ exports.updateTransaction = async (req, res) => {
 exports.editTransaction = async (req, res) => {
   try {
     // destructure transactionId  from request parameter
-    const { transacTionId } = req.params;
+    const { transactionId } = req.params;
     // getting transaction details from request body
     const transactionDetails = req.body;
     // make aircraftId as null if it is a in type transaction
@@ -329,7 +329,7 @@ exports.editTransaction = async (req, res) => {
     }
     // update the transaction in db
     const updatedTransaction = await transactionModel.findOneAndUpdate(
-      { _id: transacTionId },
+      { _id: transactionId },
       transactionDetails,
       { new: true }
     );
